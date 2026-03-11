@@ -10,17 +10,23 @@ export interface VoiceSettings {
 }
 
 export interface ElevenLabsPluginSettings {
-    apiKey: string;
     selectedVoiceId: string | null;
     selectedModelId: string | null;
     voiceSettings: { [key: string]: VoiceSettings };
 }
 
+export interface ElevenLabsSessionState {
+    apiKey: string | null;
+}
+
 export const DEFAULT_SETTINGS: ElevenLabsPluginSettings = {
-    apiKey: "",
     selectedVoiceId: null,
     selectedModelId: null,
     voiceSettings: {},
+};
+
+export const DEFAULT_SESSION: ElevenLabsSessionState = {
+    apiKey: null,
 };
 
 export class ElevenLabsSettingTab extends PluginSettingTab {
