@@ -89,7 +89,7 @@ export default class ElevenLabsPlugin extends Plugin {
             );
             this.voices = response.json.voices;
         } catch (error) {
-            console.log(error);
+            console.log("ElevenLabs: failed to load voices. Check your API key in settings.");
         }
     }
 
@@ -102,7 +102,7 @@ export default class ElevenLabsPlugin extends Plugin {
                 (m: any) => m.can_do_text_to_speech
             );
         } catch (error) {
-            console.log(error);
+            console.log("ElevenLabs: failed to load models. Check your API key in settings.");
         }
     }
 
