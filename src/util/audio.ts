@@ -56,19 +56,17 @@ export async function generateAudio(
         };
     }
 
-    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    const activeView = plugin.app.workspace.getActiveViewOfType(MarkdownView);
     const notePath = activeView?.file?.basename;
 
     try {
         const response = await ElevenLabsApi.textToSpeech(
-            plugin.settings.apiKey,
+            plugin.secrets.apiKey,
             text,
             voiceId,
             modelId,
             voiceSettings
         );
-
-        console.log(response);
 
         const date = new Date();
         const filename = generateFilename(voiceName, date);
@@ -88,6 +86,7 @@ export async function generateAudio(
         );
         new Notice(`Eleven Labs: Created audio file (${filename})`, 5000);
     } catch (error) {
-        console.log(error);
+        console.error("ElevenLabs: failed to generate audio. Check your API key in settings.");
+        new Notice("Eleven Labs: Failed to generate audio. Check your API key.", 5000);
     }
 }
