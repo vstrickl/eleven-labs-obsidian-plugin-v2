@@ -88,7 +88,7 @@ export default class ElevenLabsPlugin extends Plugin {
     async loadVoices() {
         try {
             const response = await ElevenLabsApi.getVoices(
-                this.settings.apiKey
+                this.secrets.apiKey
             );
             this.voices = response.json.voices;
         } catch (error) {
@@ -99,7 +99,7 @@ export default class ElevenLabsPlugin extends Plugin {
     async loadModels() {
         try {
             const response = await ElevenLabsApi.getModels(
-                this.settings.apiKey
+                this.secrets.apiKey
             );
             this.models = response.json.filter(
                 (m: any) => m.can_do_text_to_speech

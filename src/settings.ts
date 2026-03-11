@@ -43,17 +43,26 @@ export class ElevenLabsSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         new Setting(containerEl)
-            .setName("API Key")
-            .setDesc("Your Eleven Labs API Key")
-            .addText(
-                (text) =>
-                    (text
-                        .setPlaceholder("Enter your API Key")
-                        .setValue(this.plugin.settings.apiKey)
-                        .onChange(async (value) => {
-                            this.plugin.settings.apiKey = value;
-                            await this.plugin.saveSettings();
-                        }).inputEl.type = "password") // Set input type to password
+            .setName("⚠️ Security notice")
+            .setDesc(
+                "Your API key is stored in your vault's plugin data (data.json) " +
+                "as plain text. Do not sync this vault to a public repository " +
+                "or unencrypted cloud storage. Treat this key like a password."
             );
+
+        // Make the API key input a password field
+        new Setting(containerEl)
+            .setName("API key")
+            .setDesc("Your ElevenLabs API key from Profile Settings.")
+            .addText((text) => {
+                text.inputEl.type = "password";   // ← masks the key in UI
+                text
+                    .setPlaceholder("sk-...")
+                    .setValue(this.plugin.secrets.apiKey)
+                    .onChange(async (value) => {
+                        this.plugin.secrets.apiKey = value;
+                        await this.plugin.saveSettings();
+                    });
+            });
     }
 }
