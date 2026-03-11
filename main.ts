@@ -9,12 +9,15 @@ import {
     ElevenLabsPluginSettings,
     DEFAULT_SETTINGS,
     ElevenLabsSettingTab,
+    ElevenLabsSecrets,
+    DEFAULT_SECRETS,
 } from "./src/settings";
 import ElevenLabsApi from "./src/eleven_labs_api";
 import { ElevenLabsModal } from "./src/modals";
 
 export default class ElevenLabsPlugin extends Plugin {
     settings: ElevenLabsPluginSettings;
+    secrets: ElevenLabsSecrets;
     voices: any[];
     models: any[];
 
@@ -112,9 +115,18 @@ export default class ElevenLabsPlugin extends Plugin {
             DEFAULT_SETTINGS,
             await this.loadData()
         );
+        const savedSecrets = await this.loadData();
+        this.secrets = Object.assign(
+            {},
+            DEFAULT_SECRETS,
+            { apiKey: savedSecrets?.apiKey ?? "" }
+        );
     }
 
     async saveSettings() {
-        await this.saveData(this.settings);
+        await this.saveData({
+            ...this.settings,
+            apiKey: this.secrets.apiKey,
+        });
     }
 }

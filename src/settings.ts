@@ -9,14 +9,14 @@ export interface VoiceSettings {
     similarity_boost: number;
 }
 
+export interface ElevenLabsSecrets {
+    apiKey: string;
+}
+
 export interface ElevenLabsPluginSettings {
     selectedVoiceId: string | null;
     selectedModelId: string | null;
     voiceSettings: { [key: string]: VoiceSettings };
-}
-
-export interface ElevenLabsSessionState {
-    apiKey: string | null;
 }
 
 export const DEFAULT_SETTINGS: ElevenLabsPluginSettings = {
@@ -25,8 +25,8 @@ export const DEFAULT_SETTINGS: ElevenLabsPluginSettings = {
     voiceSettings: {},
 };
 
-export const DEFAULT_SESSION: ElevenLabsSessionState = {
-    apiKey: null,
+export const DEFAULT_SECRETS: ElevenLabsSecrets = {
+    apiKey: "",
 };
 
 export class ElevenLabsSettingTab extends PluginSettingTab {
