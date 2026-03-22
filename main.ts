@@ -9,12 +9,15 @@ import {
     ElevenLabsPluginSettings,
     DEFAULT_SETTINGS,
     ElevenLabsSettingTab,
+    ElevenLabsSecrets,
+    DEFAULT_SECRETS,
 } from "./src/settings";
 import ElevenLabsApi from "./src/eleven_labs_api";
 import { ElevenLabsModal } from "./src/modals";
 
 export default class ElevenLabsPlugin extends Plugin {
     settings: ElevenLabsPluginSettings;
+    secrets: ElevenLabsSecrets;
     voices: any[];
     models: any[];
 
@@ -63,10 +66,10 @@ export default class ElevenLabsPlugin extends Plugin {
         await this.loadSettings();
 
         // Load voices
-        this.loadVoices();
+        await this.loadVoices();
 
         // Load models
-        this.loadModels();
+        await this.loadModels();
 
         // Add context menu item
         this.app.workspace.on("editor-menu", this.addContextMenuItems);
@@ -85,36 +88,41 @@ export default class ElevenLabsPlugin extends Plugin {
     async loadVoices() {
         try {
             const response = await ElevenLabsApi.getVoices(
-                this.settings.apiKey
+                this.secrets.apiKey
             );
             this.voices = response.json.voices;
         } catch (error) {
-            console.log(error);
+            this.voices = [];
         }
     }
 
     async loadModels() {
         try {
             const response = await ElevenLabsApi.getModels(
-                this.settings.apiKey
+                this.secrets.apiKey
             );
             this.models = response.json.filter(
                 (m: any) => m.can_do_text_to_speech
             );
         } catch (error) {
-            console.log(error);
+            this.models = [];
         }
     }
 
     async loadSettings() {
-        this.settings = Object.assign(
+        const saved = await this.loadData();
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, saved);
+        this.secrets = Object.assign(
             {},
-            DEFAULT_SETTINGS,
-            await this.loadData()
+            DEFAULT_SECRETS,
+            { apiKey: saved?.apiKey ?? "" }
         );
     }
 
     async saveSettings() {
-        await this.saveData(this.settings);
+        await this.saveData({
+            ...this.settings,
+            apiKey: this.secrets.apiKey,
+        });
     }
 }
