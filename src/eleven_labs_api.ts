@@ -1,6 +1,7 @@
 import { requestUrl } from "obsidian";
 
 export const BASE_URL = "https://api.elevenlabs.io/v1";
+export const WSS_URL = "wss://api.elevenlabs.io/v1";
 
 export interface VoiceSettings {
     stability: number;
@@ -53,16 +54,26 @@ class ElevenLabsApi {
             data.voice_settings = settings;
         }
 
-        return requestUrl({
-            url: `${BASE_URL}/text-to-speech/${voiceId}`,
-            method: "POST",
-            headers: {
-                Accept: "audio/mpeg",
-                "xi-api-key": apiKey,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
+        const requestBody = JSON.stringify(data);
+        const requestUrlValue = `${BASE_URL}/text-to-speech/${voiceId}`;
+
+        try {
+            const response = await requestUrl({
+                url: requestUrlValue,
+                method: "POST",
+                contentType: "application/json",
+                headers: {
+                    "Accept": "audio/mpeg",
+                    "xi-api-key": apiKey,
+                },
+                body: requestBody,
+            });
+
+            return response;
+        } catch (error) {
+            console.error("[ElevenLabsApi.textToSpeech] Request failed");
+            throw error;
+        }
     }
 }
 
