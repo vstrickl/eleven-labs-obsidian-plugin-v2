@@ -22,7 +22,12 @@ export class ElevenLabsModal extends Modal {
         this.shouldRestoreSelection = true;
     }
 
-    onOpen() {
+    async onOpen() {
+        if (this.plugin.secrets.apiKey) {
+            await this.plugin.loadVoices();
+            await this.plugin.loadModels();
+        }
+
         const { contentEl } = this;
         contentEl.addClass("eleven-labs-modal");
 
@@ -36,7 +41,8 @@ export class ElevenLabsModal extends Modal {
             voiceSelectEl = renderVoiceSelect(this.plugin, el, () => {
                 voiceSettings = renderVoiceSettings(
                     this.plugin,
-                    voiceSettingsContainer
+                    voiceSettingsContainer,
+                    () => {}
                 );
             });
 
@@ -57,7 +63,8 @@ export class ElevenLabsModal extends Modal {
             // Voice settings
             voiceSettings = renderVoiceSettings(
                 this.plugin,
-                voiceSettingsContainer
+                voiceSettingsContainer,
+                () => {}
             );
 
             // Divider
@@ -78,13 +85,8 @@ export class ElevenLabsModal extends Modal {
                 generateAudio(
                     this.plugin,
                     this.selectedText,
-                    voiceSelectEl.options[voiceSelectEl.selectedIndex].text,
                     voiceSelectEl.value,
-                    modelSelectEl.options[modelSelectEl.selectedIndex].text,
-                    modelSelectEl.value,
-                    voiceSettings.voiceSettingsToggle.getValue(),
-                    voiceSettings.stabilitySlider.getValue(),
-                    voiceSettings.similaritySlider.getValue()
+                    modelSelectEl.value
                 );
                 this.close();
             });

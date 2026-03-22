@@ -29,6 +29,7 @@ export function renderModelLanguageChips(
     const selectedModel = models.find(
         (model) => model.model_id === selectedModelId
     );
+    if (!selectedModel) return;
     const languages: string[] = selectedModel.languages.map((language: any): string => { return language.name });
     languages.forEach((language: string) => {
         parent.createEl("span", {
@@ -40,8 +41,10 @@ export function renderModelLanguageChips(
 
 export function renderVoiceSettings(
     plugin: ElevenLabsPlugin,
-    parent: HTMLElement
+    parent: HTMLElement,
+    onVoiceSelected: () => void
 ) {
+    const voices = plugin.voices ?? [];
     parent.empty();
 
     const selectedVoiceId = plugin.settings.selectedVoiceId || "";
@@ -176,7 +179,7 @@ export function renderVoiceSelect(
     parent: HTMLElement,
     onVoiceSelected: () => void
 ): HTMLSelectElement {
-    const voices: any[] = plugin.voices;
+    const voices: any[] = plugin.voices ?? [];
     const selectedVoiceId: string = plugin.settings.selectedVoiceId || "";
     return parent.createEl("select", "dropdown", (selectEl) => {
         // Add default prompt option
@@ -186,28 +189,23 @@ export function renderVoiceSelect(
         defaultOptionEl.setAttribute("selected", "selected");
         defaultOptionEl.setAttribute("disabled", "disabled");
 
+        if (voices.length === 0) {
+            const noVoicesOptionEl = selectEl.createEl("option", {
+                text: "No voices found (check API key)",
+            });
+            noVoicesOptionEl.setAttribute("disabled", "disabled");
+            return;
+        }
+
         // Add voices to dropdown (grouped by category)
         const groupedByCategory: Map<string, any[]> =
             voicesGroupedByCategory(voices);
 
-        addCategory(
-            selectEl,
-            "Cloned",
-            groupedByCategory.get("cloned"),
-            selectedVoiceId
-        );
-        addCategory(
-            selectEl,
-            "Generated",
-            groupedByCategory.get("generated"),
-            selectedVoiceId
-        );
-        addCategory(
-            selectEl,
-            "Premade",
-            groupedByCategory.get("premade"),
-            selectedVoiceId
-        );
+        groupedByCategory.forEach((categoryVoices, categoryName) => {
+            const label =
+                categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+            addCategory(selectEl, label, categoryVoices, selectedVoiceId);
+        });
 
         selectEl.addEventListener("change", (_) => {
             const selectedOption = selectEl.value;
