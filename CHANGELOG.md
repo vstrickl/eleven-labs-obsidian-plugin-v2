@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.0 (2026-04-03)
+
+
+### Features
+
+* add CM6 StateField mark decoration for in-editor TTS highlight ([src/tts-highlight.ts](src/tts-highlight.ts))
+* add `handleTTSTrigger()` shared play/pause/resume handler on plugin class
+* register TTS command in command palette on all platforms with optional hotkey binding
+* add ribbon icon with dynamic icon/label reflecting idle/playing/paused audio state
+* manage `currentAudio` (HTMLAudioElement) and `audioState` at plugin level for cross-invocation state
+* revoke Blob URL and clear decoration automatically on natural playback end
+
+
 ## 1.0.0 (2026-03-07)
 
 
