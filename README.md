@@ -42,22 +42,47 @@ In any note, switch to **edit mode** and highlight the text you want read aloud.
 
 ### 3. Trigger playback
 
-Use any of the three entry points — they all share the same playback state:
+Use any of the following entry points — they all share the same playback state:
 
 - **Command palette** — open with `Ctrl/Cmd + P` and run `Read aloud / Pause / Resume`
 - **Ribbon icon** — click the audio icon in the left sidebar (touch-friendly on mobile)
 - **Right-click context menu** — select **Read aloud** from the editor context menu
+- **Mobile toolbar** — pin individual play/pause/resume buttons to the Obsidian mobile toolbar (see [Mobile](#mobile) below)
 
 ### 4. In-editor highlight
 
-While audio plays, the selected text is highlighted directly in the editor. The highlight persists through pause and clears automatically when playback ends.
+While audio plays, the currently spoken word is highlighted directly in the editor. The highlight follows the audio position word-by-word and clears automatically when playback ends.
 
 ### 5. Pause and resume
 
 Trigger the same entry point again to **pause**, and again to **resume**:
 
-| State | Command palette | Ribbon icon | Context menu |
-|-------|----------------|-------------|--------------|
-| Idle (text selected) | Read aloud | Play | Read aloud |
-| Playing | Pause | Pause | Pause |
-| Paused | Resume | Resume | Resume |
+| State | Command palette | Ribbon icon | Context menu | Mobile toolbar |
+|-------|----------------|-------------|--------------|----------------|
+| Idle (text selected) | Read aloud / Pause / Resume | Play | Read aloud | Read aloud |
+| Playing | Read aloud / Pause / Resume | Pause | Pause | Pause reading |
+| Paused | Read aloud / Pause / Resume | Resume | Resume | Resume reading |
+
+## Mobile
+
+The plugin is fully compatible with Obsidian for iOS and Android.
+
+### Mobile toolbar
+
+Three discrete commands can be pinned to the Obsidian mobile toolbar for one-tap access:
+
+| Command | Icon | Active when |
+|---------|------|-------------|
+| **Read aloud** | waveform | idle + text selected |
+| **Pause reading** | pause | audio is playing |
+| **Resume reading** | play | audio is paused |
+
+To add them: **Settings → Mobile → Toolbar → search "Eleven Labs"** and tap each command to add it.
+
+### Android selection handling
+
+On Android, tapping the ribbon or a toolbar button dismisses the virtual keyboard before the callback fires, which can clear the active text selection. The plugin automatically saves the last non-empty selection in the editor and falls back to it, so playback starts correctly even after the keyboard is dismissed.
+
+### Loading notice
+
+A "Generating audio…" notice is displayed while the ElevenLabs API call is in-flight. On mobile, this notice stays visible for the full duration of the request and disappears automatically the moment playback begins.
